@@ -1,0 +1,163 @@
+🛠️ Technical Specification Document
+Anonymous Secret-Sharing Web Application
+Version: 1.0
+Author: [Your Name]
+Date: [Today's Date]
+
+1. 📌 Overview
+1.1 Purpose
+This document outlines the technical architecture and implementation plan for a web application that allows users to anonymously share secrets or personal thoughts in a post format.
+
+1.2 Goals
+Provide a safe, anonymous platform for expression
+
+Ensure posts cannot be traced to users
+
+Moderate harmful or offensive content
+
+Scalable, maintainable, and secure backend with anti-bot/anti-spam.
+
+2. 🧱 Tech Stack
+Layer	Technology
+Backend	Go (Golang)
+Frontend	React / Svelte / Vue (TBD)
+Database	PostgreSQL
+Hosting	Render / Railway / Fly.io / Docker on VPS
+ORM	GORM (for Go)
+API Format	REST / JSON
+Auth (Optional)	None / Magic Links (optional future)
+Moderation	AI-assisted / Admin Panel
+Deployment	GitHub Actions + Docker
+
+3. 📐 Architecture
+3.1 High-Level Diagram
+csharp
+Copy
+Edit
+Client (Web/Mobile)
+   |
+   | HTTP / HTTPS
+   |
+[Go API Server]
+   |
+   | GORM
+   |
+[PostgreSQL DB]
+4. 📁 Project Structure (Go)
+bash
+Copy
+Edit
+/cmd/server            -> App entry point  
+/internal/handlers     -> HTTP handler functions  
+/internal/models       -> GORM models  
+/internal/db           -> DB connection & migrations  
+/internal/services     -> Business logic  
+/internal/middleware   -> Logging, CORS, etc.  
+/config                -> Config files (e.g. .env)  
+/web                   -> Static frontend (optional)  
+5. 🧩 Data Model
+5.1 Post Table
+Column	Type	Description
+id	UUID (PK)	Unique identifier
+content	TEXT	The secret / confession
+created_at	TIMESTAMP	Time of submission
+ip_hash	VARCHAR(64)	Hash of IP (for spam prevention)
+flagged	BOOLEAN	For moderation (default false)
+
+⚠️ No usernames, emails, or session data are stored to ensure anonymity. IPs can be hashed with salt for abuse control.
+
+6. 🧾 API Endpoints
+6.1 POST /api/posts
+Description: Submit a secret anonymously
+Request:
+
+json
+Copy
+Edit
+{
+  "title":   "Homeless cat"
+  "content": "I always secretly feed the homeless cats in my area, even though it is illegal and against the rules here."
+}
+Response:
+
+json
+Copy
+Edit
+{
+  "id": "uuid",
+  "created_at": "timestamp"
+}
+6.2 GET /api/posts
+Description: List recent public posts
+Response:
+
+json
+Copy
+Edit
+[
+  {
+    "id": "uuid",
+    "content": "...",
+    "created_at": "timestamp"
+  }
+]
+6.3 POST /api/posts/{id}/flag
+Description: Mark a post as inappropriate
+
+7. 🔒 Security & Privacy
+No user accounts: True anonymity
+
+Rate limiting: Based on hashed IP or external services (e.g. Cloudflare)
+
+Profanity filter: Optional service (e.g. OpenAI moderation, Perspective API)
+
+Content policy: Include disclaimers for user content
+
+IP hashing: SHA-256 with salt, rotate salt periodically
+
+8. 🛠️ Frontend Considerations
+SPA using React or SvelteKit
+
+Anonymous post form
+
+List of secrets with timestamps
+
+Optional dark/light theme
+
+Minimalistic UI with no login or tracking
+
+9. 🧪 Testing
+Unit Tests: Core logic (services, handlers)
+
+Integration Tests: End-to-end API behavior
+
+Load Testing: Optional via k6 or Artillery
+
+10. 🚀 Deployment
+Build: Go binary + compiled frontend
+
+Docker: Multi-stage build
+
+CI/CD: GitHub Actions or GitLab CI
+
+Database: Managed Postgres (e.g. Supabase, Railway)
+
+Infra as Code: Optional (Terraform or Docker Compose)
+
+11. 📈 Future Enhancements
+AI-based content moderation
+
+Category tags (e.g. Confession, Funny, Advice)
+
+Upvotes / Comments (with caution to avoid de-anonymization)
+
+Mobile app wrapper (e.g. React Native or Capacitor)
+
+12. 📄 Appendix
+Link to GitHub repository
+
+Sample .env file
+
+SQL migration for posts table
+
+Code snippets

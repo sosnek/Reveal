@@ -1,0 +1,602 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  color: #333;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  position: relative;
+}
+
+/* Theme Switcher Styles */
+.theme-switcher {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.theme-switcher-btn {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 25px;
+  padding: 0.8rem 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  color: #333;
+}
+
+.theme-switcher-btn:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.theme-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 999;
+}
+
+.theme-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 0.5rem;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  padding: 0;
+  min-width: 280px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  z-index: 1001;
+  overflow: hidden;
+}
+
+.theme-dropdown-header {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.theme-dropdown-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #666;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+  background: rgba(0, 0, 0, 0.1);
+  color: #333;
+}
+
+.theme-options {
+  padding: 0.5rem 0;
+}
+
+.theme-option {
+  display: block;
+  width: 100%;
+  padding: 1rem 1.5rem;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 0;
+}
+
+.theme-option:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.theme-option.active {
+  background: rgba(102, 126, 234, 0.1);
+  border-left: 4px solid #667eea;
+}
+
+.theme-name {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: #333;
+}
+
+.theme-description {
+  font-size: 0.85rem;
+  color: #666;
+  font-weight: 400;
+}
+
+.theme-dropdown-footer {
+  padding: 0.75rem 1.5rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.theme-dropdown-footer p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #666;
+  text-align: center;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 3rem;
+  color: white;
+}
+
+.header h1 {
+  font-size: 4.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  letter-spacing: -2px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.8) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.header p {
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+
+.post-form {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  margin-bottom: 3rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #555;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid #e1e5e9;
+  border-radius: 12px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+  resize: vertical;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.form-group textarea {
+  min-height: 120px;
+}
+
+.submit-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  width: 100%;
+}
+
+.submit-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.posts-section {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.posts-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.posts-header h2 {
+  font-size: 2rem;
+  font-weight: 300;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.posts-count {
+  color: #666;
+  font-size: 1rem;
+}
+
+.post-card {
+  background: #f8f9fa;
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  border-left: 4px solid #667eea;
+  transition: transform 0.2s ease;
+}
+
+.post-card:hover {
+  transform: translateY(-2px);
+}
+
+.post-card h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 0.8rem;
+  color: #333;
+}
+
+.post-content {
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  color: #555;
+  white-space: pre-wrap;
+}
+
+.post-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #888;
+}
+
+.post-date {
+  font-style: italic;
+}
+
+.flag-btn {
+  background: #ff6b6b;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.flag-btn:hover {
+  background: #ff5252;
+}
+
+.loading {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+.error {
+  background: #ffebee;
+  color: #c62828;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  border-left: 4px solid #c62828;
+}
+
+.success {
+  background: #e8f5e8;
+  color: #2e7d32;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  border-left: 4px solid #2e7d32;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+}
+
+.empty-state h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: 300;
+}
+
+.footer {
+  text-align: center;
+  margin-top: 3rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
+}
+
+.footer a {
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+  
+  .header h1 {
+    font-size: 2rem;
+  }
+  
+  .post-form,
+  .posts-section {
+    padding: 1.5rem;
+  }
+
+  .theme-switcher {
+    top: 10px;
+    right: 10px;
+  }
+
+  .theme-switcher-btn {
+    padding: 0.6rem 1rem;
+    font-size: 0.8rem;
+  }
+
+  .theme-dropdown {
+    min-width: 250px;
+  }
+}
+
+/* Flag Modal Styles */
+.flag-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 2000;
+}
+
+.flag-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+  z-index: 2001;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.flag-modal-header {
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #e8e8e8;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.flag-modal-header h3 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.flag-modal-content {
+  padding: 2rem;
+}
+
+.flag-reason-group {
+  margin-bottom: 1.5rem;
+}
+
+.flag-reason-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.flag-reason-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.flag-reason-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 2px solid #e8e8e8;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: normal !important;
+  margin-bottom: 0 !important;
+}
+
+.flag-reason-option:hover {
+  border-color: #667eea;
+  background: #f8f9ff;
+}
+
+.flag-reason-option input[type="radio"] {
+  margin: 0;
+  width: auto;
+}
+
+.flag-reason-option input[type="radio"]:checked + .flag-reason-text {
+  color: #667eea;
+}
+
+.flag-reason-text {
+  flex: 1;
+  margin: 0;
+}
+
+.flag-details-group {
+  margin-bottom: 1.5rem;
+}
+
+.flag-details-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.flag-details-group textarea {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid #e8e8e8;
+  border-radius: 8px;
+  font-size: 1rem;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.flag-details-group textarea:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.character-count {
+  text-align: right;
+  font-size: 0.8rem;
+  color: #888;
+  margin-top: 0.25rem;
+}
+
+.flag-modal-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+}
+
+.cancel-btn {
+  background: transparent;
+  color: #666;
+  border: 2px solid #ddd;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancel-btn:hover:not(:disabled) {
+  background: #f5f5f5;
+  border-color: #bbb;
+}
+
+.flag-submit-btn {
+  background: #ff6b6b;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.flag-submit-btn:hover:not(:disabled) {
+  background: #ff5252;
+}
+
+.flag-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .flag-modal {
+    width: 95%;
+    margin: 1rem;
+  }
+  
+  .flag-modal-header,
+  .flag-modal-content {
+    padding: 1rem;
+  }
+  
+  .flag-modal-actions {
+    flex-direction: column;
+  }
+  
+  .cancel-btn,
+  .flag-submit-btn {
+    width: 100%;
+  }
+} 

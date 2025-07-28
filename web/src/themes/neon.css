@@ -1,0 +1,410 @@
+/* Neon Cyberpunk Theme - Futuristic and Vibrant */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Courier New', 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: radial-gradient(ellipse at center, #0a0a0a 0%, #000000 70%);
+  background-attachment: fixed;
+  min-height: 100vh;
+  color: #00ff88;
+  position: relative;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    linear-gradient(90deg, transparent 98%, rgba(0, 255, 136, 0.03) 100%),
+    linear-gradient(180deg, transparent 98%, rgba(255, 0, 136, 0.03) 100%);
+  background-size: 50px 50px;
+  pointer-events: none;
+  z-index: -1;
+  animation: grid-move 20s linear infinite;
+}
+
+@keyframes grid-move {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(50px, 50px); }
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 3rem;
+  color: #00ff88;
+}
+
+.header h1 {
+  font-size: 5rem;
+  font-weight: 900;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 
+    0 0 10px #00ff88,
+    0 0 20px #00ff88,
+    0 0 30px #00ff88,
+    0 0 40px #00ff88;
+  animation: neon-flicker 2s infinite alternate;
+}
+
+@keyframes neon-flicker {
+  0%, 100% { 
+    text-shadow: 
+      0 0 5px #00ff88,
+      0 0 10px #00ff88,
+      0 0 15px #00ff88,
+      0 0 20px #00ff88;
+  }
+  50% { 
+    text-shadow: 
+      0 0 2px #00ff88,
+      0 0 5px #00ff88,
+      0 0 8px #00ff88,
+      0 0 12px #00ff88;
+  }
+}
+
+.header p {
+  font-size: 1.1rem;
+  color: #ff0088;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 0 0 10px #ff0088;
+}
+
+.post-form {
+  background: rgba(0, 20, 40, 0.8);
+  border: 2px solid #00ff88;
+  border-radius: 10px;
+  padding: 2rem;
+  margin-bottom: 3rem;
+  box-shadow: 
+    0 0 20px rgba(0, 255, 136, 0.3),
+    inset 0 0 20px rgba(0, 255, 136, 0.1);
+  position: relative;
+}
+
+.post-form::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #00ff88, #ff0088, #0088ff, #00ff88);
+  border-radius: 10px;
+  z-index: -1;
+  animation: border-rotate 3s linear infinite;
+}
+
+@keyframes border-rotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #00ff88;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 0.9rem;
+  text-shadow: 0 0 5px #00ff88;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid #0088ff;
+  border-radius: 5px;
+  font-size: 1rem;
+  color: #00ff88;
+  transition: all 0.3s ease;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #ff0088;
+  background: rgba(0, 0, 0, 0.9);
+  box-shadow: 
+    0 0 15px rgba(255, 0, 136, 0.5),
+    inset 0 0 10px rgba(255, 0, 136, 0.1);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: #666;
+}
+
+.form-group textarea {
+  min-height: 120px;
+}
+
+.submit-btn {
+  background: linear-gradient(45deg, #ff0088, #00ff88);
+  color: #000;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 5px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 0 20px rgba(255, 0, 136, 0.5);
+  position: relative;
+  overflow: hidden;
+}
+
+.submit-btn::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transform: rotate(45deg);
+  transition: all 0.5s;
+  opacity: 0;
+}
+
+.submit-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(255, 0, 136, 0.7);
+}
+
+.submit-btn:hover:not(:disabled)::before {
+  animation: shine 0.5s ease-in-out;
+  opacity: 1;
+}
+
+@keyframes shine {
+  0% { left: -50%; }
+  100% { left: 150%; }
+}
+
+.submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.posts-section {
+  background: rgba(0, 20, 40, 0.8);
+  border: 2px solid #0088ff;
+  border-radius: 10px;
+  padding: 2rem;
+  box-shadow: 
+    0 0 20px rgba(0, 136, 255, 0.3),
+    inset 0 0 20px rgba(0, 136, 255, 0.1);
+}
+
+.posts-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.posts-header h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #0088ff;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px #0088ff;
+}
+
+.posts-count {
+  color: #666;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.post-card {
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  border-left: 4px solid #00ff88;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.post-card:hover {
+  transform: translateY(-2px);
+  background: rgba(0, 0, 0, 0.8);
+  border-color: #00ff88;
+  box-shadow: 
+    0 5px 25px rgba(0, 255, 136, 0.2),
+    0 0 20px rgba(0, 255, 136, 0.1);
+}
+
+.post-card h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+  color: #00ff88;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.post-content {
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  color: #ccc;
+  white-space: pre-wrap;
+  font-family: 'Courier New', monospace;
+}
+
+.post-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #666;
+  border-top: 1px solid #333;
+  padding-top: 1rem;
+}
+
+.post-date {
+  font-style: normal;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.flag-btn {
+  background: linear-gradient(45deg, #ff0088, #ff4444);
+  color: #fff;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 700;
+  box-shadow: 0 0 10px rgba(255, 0, 136, 0.3);
+}
+
+.flag-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(255, 0, 136, 0.5);
+}
+
+.loading {
+  text-align: center;
+  padding: 3rem;
+  color: #0088ff;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 0 0 10px #0088ff;
+}
+
+.error {
+  background: rgba(255, 0, 136, 0.1);
+  color: #ff0088;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  border: 1px solid #ff0088;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 0 10px rgba(255, 0, 136, 0.3);
+}
+
+.success {
+  background: rgba(0, 255, 136, 0.1);
+  color: #00ff88;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  border: 1px solid #00ff88;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+}
+
+.empty-state h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+  color: #0088ff;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px #0088ff;
+}
+
+.footer {
+  text-align: center;
+  margin-top: 3rem;
+  color: #666;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.footer a {
+  color: #ff0088;
+  text-decoration: none;
+  text-shadow: 0 0 5px #ff0088;
+}
+
+.footer a:hover {
+  text-shadow: 0 0 10px #ff0088;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+  
+  .header h1 {
+    font-size: 2.5rem;
+    letter-spacing: 2px;
+  }
+  
+  .post-form,
+  .posts-section {
+    padding: 1.5rem;
+  }
+} 

@@ -1,0 +1,42 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: reveal_postgres
+    environment:
+      POSTGRES_USER: reveal_user
+      POSTGRES_PASSWORD: reveal_password
+      POSTGRES_DB: reveal_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U reveal_user -d reveal_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: reveal_app
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: reveal_user
+      DB_PASSWORD: reveal_password
+      DB_NAME: reveal_db
+      DB_SSLMODE: disable
+      SERVER_HOST: 0.0.0.0
+      SERVER_PORT: 8080
+      SALT_KEY: your_random_salt_key_change_in_production
+      GIN_MODE: release
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres_data: 
