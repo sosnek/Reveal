@@ -42,9 +42,37 @@ func Connect() {
 }
 
 func Migrate() {
-	err := DB.AutoMigrate(&models.Post{}, &models.UserFlag{})
+	err := DB.AutoMigrate(&models.Post{}, &models.UserFlag{}, &models.Comment{}, &models.Vote{})
 	if err != nil {
 		log.Fatal("Failed to migrate database:", err)
 	}
+	
+	// Drop old reactions table if it exists and create votes table
+	if DB.Migrator().HasTable("reactions") {
+		log.Println("Dropping old reactions table...")
+		err = DB.Migrator().DropTable("reactions")
+		if err != nil {
+			log.Printf("Warning: Failed to drop reactions table: %v", err)
+		}
+	}
+	
+	// Add unique constraint for votes to prevent duplicate votes
+	// This prevents the same user from voting multiple times on the same post/comment with the same vote type
+	if !DB.Migrator().HasConstraint(&models.Vote{}, "unique_vote_constraint") {
+		err = DB.Exec(`
+			ALTER TABLE votes ADD CONSTRAINT unique_vote_constraint UNIQUE (
+				COALESCE(post_id::text, ''), 
+				COALESCE(comment_id::text, ''), 
+				vote_type, 
+				ip_hash
+			)
+		`).Error
+		if err != nil {
+			log.Printf("Warning: Failed to add unique constraint for votes: %v", err)
+		} else {
+			log.Println("Added unique constraint for votes")
+		}
+	}
+	
 	log.Println("Database migration completed")
 } 

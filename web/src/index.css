@@ -599,4 +599,374 @@ body {
   .flag-submit-btn {
     width: 100%;
   }
+}
+
+/* ===== VOTING COMPONENT STYLES ===== */
+.voting-section {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.voting-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 60px;
+}
+
+.vote-btn {
+  background: #ffffff;
+  border: 1px solid #e1e8ed;
+  border-radius: 50%;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 1.1rem;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.vote-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: currentColor;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  border-radius: inherit;
+}
+
+.vote-btn:hover::before {
+  opacity: 0.1;
+}
+
+.vote-btn:active {
+  transform: scale(0.95);
+}
+
+.upvote-btn {
+  color: #657786;
+  border-color: #e1e8ed;
+}
+
+.upvote-btn:hover {
+  color: #ff6b35;
+  border-color: #ff6b35;
+  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.2);
+  transform: translateY(-1px);
+}
+
+.upvote-btn.voted {
+  background: linear-gradient(135deg, #ff6b35, #ff8c42);
+  color: white;
+  border-color: #ff6b35;
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+  transform: translateY(-1px);
+}
+
+.upvote-btn.voted::before {
+  opacity: 0;
+}
+
+.downvote-btn {
+  color: #657786;
+  border-color: #e1e8ed;
+}
+
+.downvote-btn:hover {
+  color: #e74c3c;
+  border-color: #e74c3c;
+  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.2);
+  transform: translateY(-1px);
+}
+
+.downvote-btn.voted {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  color: white;
+  border-color: #e74c3c;
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+  transform: translateY(-1px);
+}
+
+.downvote-btn.voted::before {
+  opacity: 0;
+}
+
+.vote-arrow {
+  font-size: 1rem;
+  line-height: 1;
+  font-weight: 600;
+  position: relative;
+  z-index: 1;
+}
+
+.vote-score {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #14171a;
+  min-height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 50px;
+  padding: 0.25rem 0.5rem;
+  border-radius: 16px;
+  background: #f7f9fa;
+  border: 1px solid #e1e8ed;
+  transition: all 0.2s ease;
+}
+
+.vote-score:hover {
+  background: #f0f3f4;
+}
+
+.vote-details {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.75rem;
+  color: #657786;
+  margin-top: 0.5rem;
+  justify-content: center;
+  font-weight: 500;
+}
+
+.upvotes, .downvotes {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  background: #f7f9fa;
+  border: 1px solid #e1e8ed;
+}
+
+.voting-loading {
+  color: #657786;
+  font-style: italic;
+  padding: 0.5rem 0;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+/* ===== COMMENTS COMPONENT STYLES ===== */
+.comments-section {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.comments-toggle {
+  background: transparent;
+  border: none;
+  color: #667eea;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.5rem 0;
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
+}
+
+.comments-toggle:hover {
+  color: #5a6fd8;
+  text-decoration: underline;
+}
+
+.comments-content {
+  margin-top: 1rem;
+}
+
+.comment-form {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.comment-message {
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.comment-message.success {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.comment-message.error {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.comment-input-group {
+  position: relative;
+}
+
+.comment-input-group textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #e8e8e8;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 80px;
+}
+
+.comment-input-group textarea:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.comment-char-count {
+  font-size: 0.75rem;
+  color: #888;
+  text-align: right;
+  margin-top: 0.25rem;
+}
+
+.comment-submit-btn {
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.comment-submit-btn:hover:not(:disabled) {
+  background: #5a6fd8;
+}
+
+.comment-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.comments-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.comments-loading,
+.no-comments {
+  text-align: center;
+  color: #888;
+  font-style: italic;
+  padding: 1rem;
+}
+
+.comment-item {
+  background: white;
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.comment-main {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.comment-body {
+  flex: 1;
+}
+
+.comment-content {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+
+.comment-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Adjust voting section for comments */
+.comment-main .voting-section {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+  flex-shrink: 0;
+}
+
+.comment-date {
+  font-size: 0.75rem;
+  color: #888;
+}
+
+/* ===== RESPONSIVE STYLES FOR NEW COMPONENTS ===== */
+@media (max-width: 768px) {
+  .voting-buttons {
+    min-width: 50px;
+    gap: 0.4rem;
+  }
+  
+  .vote-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 0.95rem;
+  }
+  
+  .vote-score {
+    font-size: 0.9rem;
+    min-width: 45px;
+    min-height: 24px;
+    padding: 0.2rem 0.4rem;
+  }
+  
+  .vote-details {
+    font-size: 0.7rem;
+    gap: 0.75rem;
+  }
+  
+  .upvotes, .downvotes {
+    padding: 0.2rem 0.4rem;
+    font-size: 0.7rem;
+  }
+  
+  .comment-main {
+    gap: 0.75rem;
+  }
+  
+  .comment-form {
+    padding: 0.75rem;
+  }
+  
+  .comment-input-group textarea {
+    padding: 0.6rem;
+    font-size: 0.85rem;
+  }
+  
+  .comment-submit-btn {
+    width: 100%;
+    padding: 0.75rem;
+  }
+  
+  .comment-item {
+    padding: 0.75rem;
+  }
 } 

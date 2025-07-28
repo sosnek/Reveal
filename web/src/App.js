@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ThemeSwitcher from './components/ThemeSwitcher';
 import FlagModal from './components/FlagModal';
+import Comments from './components/Comments';
+import Voting from './components/Voting';
 import './index.css';
 
 function App() {
@@ -239,6 +241,12 @@ function App() {
                   Flag
                 </button>
               </div>
+              
+              {/* Voting Section */}
+              <Voting postId={post.id} />
+              
+              {/* Comments Section */}
+              <Comments postId={post.id} />
             </div>
           ))
         )}

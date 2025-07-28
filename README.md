@@ -6,7 +6,9 @@ A secure, anonymous web application for sharing secrets and personal thoughts. B
 
 - **Complete Anonymity**: No user accounts, login, or tracking
 - **Privacy First**: IP addresses are hashed with salt for spam prevention only
+- **Interactive Engagement**: Anonymous comments and upvote/downvote system
 - **Modern UI**: Beautiful, responsive interface with dark/light themes
+- **Community Moderation**: Flagging system for inappropriate content
 - **Spam Protection**: Rate limiting and basic content moderation
 - **Secure Backend**: Built with Go, PostgreSQL, and security best practices
 - **Easy Deployment**: Docker support for simple hosting
@@ -66,12 +68,33 @@ npm run build
 
 ## 📝 API Endpoints
 
+### Core Endpoints
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET    | `/api/health` | Health check |
+| GET    | `/api/flag-reasons` | Get available flag reasons |
+
+### Post Endpoints
+| Method | Endpoint | Description |
+|--------|----------|-------------|
 | POST   | `/api/posts` | Submit a secret |
 | GET    | `/api/posts` | List recent posts |
 | POST   | `/api/posts/{id}/flag` | Flag inappropriate content |
+
+### Comment Endpoints
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST   | `/api/posts/{id}/comments` | Add a comment to a post |
+| GET    | `/api/posts/{id}/comments` | Get comments for a post |
+| POST   | `/api/comments/{id}/flag` | Flag inappropriate comment |
+
+### Voting Endpoints
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST   | `/api/posts/{id}/vote` | Upvote/downvote a post |
+| GET    | `/api/posts/{id}/votes` | Get vote counts for a post |
+| POST   | `/api/comments/{id}/vote` | Upvote/downvote a comment |
+| GET    | `/api/comments/{id}/votes` | Get vote counts for a comment |
 
 ### Example Usage
 
@@ -85,6 +108,32 @@ curl -X POST http://localhost:8080/api/posts \
 **Get recent posts:**
 ```bash
 curl http://localhost:8080/api/posts?limit=10
+```
+
+**Add a comment:**
+```bash
+curl -X POST http://localhost:8080/api/posts/{post-id}/comments \
+  -H "Content-Type: application/json" \
+  -d '{"content": "This really resonated with me..."}'
+```
+
+**Upvote a post:**
+```bash
+curl -X POST http://localhost:8080/api/posts/{post-id}/vote \
+  -H "Content-Type: application/json" \
+  -d '{"vote_type": "upvote"}'
+```
+
+**Get vote counts:**
+```bash
+curl http://localhost:8080/api/posts/{post-id}/votes
+```
+
+**Vote on a comment:**
+```bash
+curl -X POST http://localhost:8080/api/comments/{comment-id}/vote \
+  -H "Content-Type: application/json" \
+  -d '{"vote_type": "downvote"}'
 ```
 
 ## 🔒 Security Features

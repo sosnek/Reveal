@@ -29,6 +29,8 @@ func main() {
 
 	// Initialize handlers
 	postHandler := handlers.NewPostHandler()
+	commentHandler := handlers.NewCommentHandler()
+	voteHandler := handlers.NewVoteHandler()
 
 	// Setup router
 	router := gin.New()
@@ -48,11 +50,25 @@ func main() {
 	// API routes
 	api := router.Group("/api")
 	{
+		// Health and utility endpoints
 		api.GET("/health", postHandler.HealthCheck)
 		api.GET("/flag-reasons", postHandler.GetFlagReasons)
+		
+		// Post endpoints
 		api.POST("/posts", middleware.RateLimit(), postHandler.CreatePost)
 		api.GET("/posts", postHandler.GetPosts)
 		api.POST("/posts/:id/flag", middleware.RateLimit(), postHandler.FlagPost)
+		
+		// Comment endpoints
+		api.POST("/posts/:id/comments", middleware.RateLimit(), commentHandler.CreateComment)
+		api.GET("/posts/:id/comments", commentHandler.GetComments)
+		api.POST("/comments/:id/flag", middleware.RateLimit(), commentHandler.FlagComment)
+		
+		// Vote endpoints (for both posts and comments)
+		api.POST("/posts/:id/vote", middleware.RateLimit(), voteHandler.VoteOnPost)
+		api.GET("/posts/:id/votes", voteHandler.GetPostVotes)
+		api.POST("/comments/:id/vote", middleware.RateLimit(), voteHandler.VoteOnComment)
+		api.GET("/comments/:id/votes", voteHandler.GetCommentVotes)
 	}
 
 	// Fallback to serve React app for client-side routing

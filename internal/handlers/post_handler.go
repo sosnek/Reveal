@@ -176,7 +176,6 @@ func (h *PostHandler) GetFlagReasons(c *gin.Context) {
 		"inappropriate": "Inappropriate content",
 		"hate_speech": "Hate speech or discrimination",
 		"harassment": "Harassment or bullying",
-		"violence": "Violence or threats",
 		"other": "Other (please specify)",
 	}
 	
