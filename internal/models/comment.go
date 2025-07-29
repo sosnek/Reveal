@@ -15,6 +15,11 @@ type Comment struct {
 	IPHash    string    `gorm:"type:varchar(64);not null" json:"-"`
 	Flagged   bool      `gorm:"default:false" json:"flagged"`
 	
+	// Vote counts - populated by service layer, not stored in DB
+	Upvotes     int64  `gorm:"-" json:"upvotes"`
+	Downvotes   int64  `gorm:"-" json:"downvotes"`
+	UserVote    string `gorm:"-" json:"user_vote"`
+	
 	// Foreign key relationship
 	Post Post `gorm:"foreignKey:PostID;references:ID;constraint:OnDelete:CASCADE" json:"-"`
 }

@@ -1,0 +1,16 @@
+{
+  "buildCommand": "cd web && npm run build",
+  "outputDirectory": "web/build",
+  "installCommand": "cd web && npm install",
+  "framework": "vite",
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "https://your-backend-url.com/api/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+} 

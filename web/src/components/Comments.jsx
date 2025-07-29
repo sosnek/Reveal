@@ -275,7 +275,18 @@ export default function Comments({ postId }) {
                       <div className="flex gap-4">
                         {/* Voting Section */}
                         <div className="flex-shrink-0">
-                          <Voting commentId={comment.id} />
+                          <Voting 
+                            commentId={comment.id} 
+                            initialVotes={{
+                              upvotes: comment.upvotes || 0,
+                              downvotes: comment.downvotes || 0,
+                              userVote: comment.user_vote || ''
+                            }}
+                            onVoteUpdate={() => {
+                              // Refresh comments to get updated vote counts
+                              fetchComments()
+                            }}
+                          />
                         </div>
                         
                         {/* Comment Content */}

@@ -84,6 +84,76 @@ func (s *CommentService) GetCommentsByPostID(postID uuid.UUID, clientIP string) 
 		return nil, result.Error
 	}
 
+	// If no comments, return empty slice
+	if len(comments) == 0 {
+		return comments, nil
+	}
+
+	// Extract comment IDs for efficient vote count query
+	commentIDs := make([]uuid.UUID, len(comments))
+	for i, comment := range comments {
+		commentIDs[i] = comment.ID
+	}
+
+	// Get vote counts for all comments in a single query
+	type VoteCount struct {
+		CommentID uuid.UUID `json:"comment_id"`
+		VoteType  string    `json:"vote_type"`
+		Count     int64     `json:"count"`
+	}
+	
+	var voteCounts []VoteCount
+	db.DB.Table("votes").
+		Select("comment_id, vote_type, COUNT(*) as count").
+		Where("comment_id IN ?", commentIDs).
+		Group("comment_id, vote_type").
+		Scan(&voteCounts)
+
+	// Get user's votes for all comments in a single query
+	type UserVote struct {
+		CommentID uuid.UUID `json:"comment_id"`
+		VoteType  string    `json:"vote_type"`
+	}
+	
+	var userVotes []UserVote
+	db.DB.Table("votes").
+		Select("comment_id, vote_type").
+		Where("comment_id IN ? AND ip_hash = ?", commentIDs, ipHash).
+		Scan(&userVotes)
+
+	// Create maps for efficient lookup
+	voteCountMap := make(map[uuid.UUID]map[string]int64)
+	userVoteMap := make(map[uuid.UUID]string)
+
+	// Initialize vote count map
+	for _, commentID := range commentIDs {
+		voteCountMap[commentID] = map[string]int64{
+			models.VoteTypeUpvote:   0,
+			models.VoteTypeDownvote: 0,
+		}
+	}
+
+	// Populate vote counts
+	for _, vc := range voteCounts {
+		if voteCountMap[vc.CommentID] == nil {
+			voteCountMap[vc.CommentID] = make(map[string]int64)
+		}
+		voteCountMap[vc.CommentID][vc.VoteType] = vc.Count
+	}
+
+	// Populate user votes
+	for _, uv := range userVotes {
+		userVoteMap[uv.CommentID] = uv.VoteType
+	}
+
+	// Assign vote data to comments
+	for i := range comments {
+		commentID := comments[i].ID
+		comments[i].Upvotes = voteCountMap[commentID][models.VoteTypeUpvote]
+		comments[i].Downvotes = voteCountMap[commentID][models.VoteTypeDownvote]
+		comments[i].UserVote = userVoteMap[commentID]
+	}
+
 	return comments, nil
 }
 

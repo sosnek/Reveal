@@ -52,21 +52,22 @@ export default function Voting({
       setVoting(true)
       const endpoint = postId ? `/api/posts/${postId}/vote` : `/api/comments/${commentId}/vote`
       
-      await axios.post(endpoint, { vote_type: voteType })
+      // The vote endpoint returns updated vote counts, so we can use that
+      const response = await axios.post(endpoint, { vote_type: voteType })
       
-      // If we have initial votes, try to update locally and call onVoteUpdate
-      if (initialVotes && onVoteUpdate) {
-        await fetchVotes() // Get fresh data
-        // Get the updated votes and call the callback
-        const updatedEndpoint = postId ? `/api/posts/${postId}/votes` : `/api/comments/${commentId}/votes`
-        const response = await axios.get(updatedEndpoint)
-        setVotes(response.data)
+      // Update local state with the response data
+      setVotes(response.data)
+      
+      // If we have a callback, call it to refresh parent data
+      if (onVoteUpdate) {
         onVoteUpdate(response.data)
-      } else {
-        await fetchVotes()
       }
     } catch (error) {
       console.error('Error voting:', error)
+      // On error, refresh the vote data to ensure consistency
+      if (!initialVotes) {
+        await fetchVotes()
+      }
     } finally {
       setVoting(false)
     }
