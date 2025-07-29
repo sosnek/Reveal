@@ -1,4 +1,4 @@
-# Reveal - Anonymous Secret Sharing
+# Reveal - Anonymous Secret Sharing - Vibe coded in one day. View it live at https://reveal-1.onrender.com/
 
 A secure, anonymous web application for sharing secrets and personal thoughts. Built with Go backend and modern React frontend, designed with privacy and anonymity as core principles.
 
