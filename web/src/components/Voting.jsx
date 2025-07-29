@@ -5,14 +5,32 @@ import { Badge } from '@/components/ui/badge'
 import { ChevronUp, ChevronDown, TrendingUp, Minus } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-export default function Voting({ postId, commentId }) {
-  const [votes, setVotes] = useState({ upvotes: 0, downvotes: 0, userVote: '', score: 0 })
-  const [loading, setLoading] = useState(true)
+export default function Voting({ 
+  postId, 
+  commentId, 
+  initialVotes = null, // { upvotes, downvotes, userVote }
+  onVoteUpdate = null // Callback when vote changes
+}) {
+  const [votes, setVotes] = useState(
+    initialVotes || { upvotes: 0, downvotes: 0, userVote: '', score: 0 }
+  )
+  const [loading, setLoading] = useState(!initialVotes)
   const [voting, setVoting] = useState(false)
 
   useEffect(() => {
-    fetchVotes()
-  }, [postId, commentId])
+    // Only fetch votes if no initial vote data was provided
+    if (!initialVotes) {
+      fetchVotes()
+    }
+  }, [postId, commentId, initialVotes])
+
+  useEffect(() => {
+    // Update state when initialVotes prop changes
+    if (initialVotes) {
+      setVotes(initialVotes)
+      setLoading(false)
+    }
+  }, [initialVotes])
 
   const fetchVotes = async () => {
     try {
@@ -35,7 +53,18 @@ export default function Voting({ postId, commentId }) {
       const endpoint = postId ? `/api/posts/${postId}/vote` : `/api/comments/${commentId}/vote`
       
       await axios.post(endpoint, { vote_type: voteType })
-      await fetchVotes()
+      
+      // If we have initial votes, try to update locally and call onVoteUpdate
+      if (initialVotes && onVoteUpdate) {
+        await fetchVotes() // Get fresh data
+        // Get the updated votes and call the callback
+        const updatedEndpoint = postId ? `/api/posts/${postId}/votes` : `/api/comments/${commentId}/votes`
+        const response = await axios.get(updatedEndpoint)
+        setVotes(response.data)
+        onVoteUpdate(response.data)
+      } else {
+        await fetchVotes()
+      }
     } catch (error) {
       console.error('Error voting:', error)
     } finally {

@@ -43,7 +43,7 @@ func (suite *PostHandlerTestSuite) SetupSuite() {
 	suite.db = database
 	
 	// Auto-migrate the schema
-	err = database.AutoMigrate(&models.Post{}, &models.UserFlag{})
+	err = database.AutoMigrate(&models.Post{}, &models.Flag{})
 	suite.Require().NoError(err)
 	
 	// Set test environment variable
@@ -74,7 +74,7 @@ func (suite *PostHandlerTestSuite) TearDownSuite() {
 
 func (suite *PostHandlerTestSuite) SetupTest() {
 	// Clean the database before each test
-	suite.db.Exec("DELETE FROM user_flags")
+	suite.db.Exec("DELETE FROM flags")
 	suite.db.Exec("DELETE FROM posts")
 	
 	// Reset rate limiters to avoid interference between tests

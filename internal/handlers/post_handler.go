@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"reveal/internal/services"
+	"reveal/internal/models"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -82,7 +83,7 @@ func (h *PostHandler) GetPosts(c *gin.Context) {
 	}
 
 	clientIP := c.ClientIP()
-	posts, err := h.postService.GetRecentPosts(limit, clientIP)
+	posts, err := h.postService.GetRecentPosts(clientIP, limit)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "Failed to fetch posts",
@@ -94,7 +95,7 @@ func (h *PostHandler) GetPosts(c *gin.Context) {
 }
 
 type FlagPostRequest struct {
-	Reason  string `json:"reason" binding:"required"`
+	Reason  string `json:"reason"`
 	Details string `json:"details"`
 }
 
@@ -118,28 +119,35 @@ func (h *PostHandler) FlagPost(c *gin.Context) {
 		return
 	}
 
-	// Validate reason
-	validReasons := []string{"spam", "inappropriate", "hate_speech", "harassment", "violence", "other"}
-	isValidReason := false
-	for _, validReason := range validReasons {
-		if req.Reason == validReason {
-			isValidReason = true
-			break
-		}
-	}
-	
-	if !isValidReason {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Invalid flag reason",
-		})
-		return
+	// Use default reason if none provided
+	if req.Reason == "" {
+		req.Reason = "reported"
 	}
 
-	if req.Reason == "other" && req.Details == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Details required when reason is 'other'",
-		})
-		return
+	// Only validate reason if it's not the default
+	if req.Reason != "reported" {
+		validReasons := models.GetValidFlagReasons()
+		isValidReason := false
+		for _, validReason := range validReasons {
+			if req.Reason == validReason {
+				isValidReason = true
+				break
+			}
+		}
+		
+		if !isValidReason {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "Invalid flag reason",
+			})
+			return
+		}
+
+		if req.Reason == "other" && req.Details == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "Details required when reason is 'other'",
+			})
+			return
+		}
 	}
 
 	clientIP := c.ClientIP()

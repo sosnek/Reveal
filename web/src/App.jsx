@@ -58,7 +58,7 @@ function AppContent() {
                   <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
                     Reveal
                   </h1>
-                  <p className="text-sm text-muted-foreground">Anonymous secrets, safely shared</p>
+                  <p className="text-sm text-muted-foreground">Anonymous secrets, safely shared.</p>
                 </div>
               </div>
               
@@ -88,7 +88,7 @@ function AppContent() {
             
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
               Share your deepest thoughts, confessions, and secrets in a completely anonymous and judgment-free environment. 
-              Your identity remains private, always.
+              Your identity remains private, always. A
             </p>
           </div>
 

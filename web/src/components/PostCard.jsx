@@ -4,11 +4,12 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import Voting from '@/components/Voting'
 import Comments from '@/components/Comments'
-import { Flag, MessageCircle, Clock, Eye, EyeOff } from 'lucide-react'
+import FlagConfirmModal from '@/components/FlagConfirmModal'
+import { Flag, Clock, Eye, EyeOff } from 'lucide-react'
 
 export default function PostCard({ post, onUpdate }) {
-  const [showFlagModal, setShowFlagModal] = useState(false)
   const [isExpanded, setIsExpanded] = useState(false)
+  const [showFlagModal, setShowFlagModal] = useState(false)
 
   const formatDate = (dateString) => {
     const date = new Date(dateString)
@@ -34,7 +35,7 @@ export default function PostCard({ post, onUpdate }) {
     ? post.content.substring(0, 300) + '...' 
     : post.content
 
-  return (
+return (
     <Card className="group relative overflow-hidden bg-card/50 backdrop-blur-sm border-border/50 shadow-md hover:shadow-xl transition-all duration-300 hover:border-border">
       {/* Subtle gradient background */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-500/[0.02] via-transparent to-purple-500/[0.02] dark:from-blue-400/[0.02] dark:to-purple-400/[0.02] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -104,7 +105,20 @@ export default function PostCard({ post, onUpdate }) {
         <div className="border-t border-border/50 pt-4 space-y-4">
           {/* Voting Row */}
           <div className="flex items-center justify-between">
-            <Voting postId={post.id} />
+            <Voting 
+              postId={post.id} 
+              initialVotes={{
+                upvotes: post.upvotes || 0,
+                downvotes: post.downvotes || 0,
+                userVote: post.user_vote || ''
+              }}
+              onVoteUpdate={(updatedVotes) => {
+                // Update the post data with new vote counts
+                if (onUpdate) {
+                  onUpdate();
+                }
+              }}
+            />
             <div className="text-xs text-muted-foreground">
               Share your thoughts below
             </div>
@@ -117,40 +131,14 @@ export default function PostCard({ post, onUpdate }) {
         </div>
       </CardContent>
 
-      {/* Flag Modal (Simple) */}
-      {showFlagModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <Card className="w-full max-w-md bg-card border-border shadow-2xl">
-            <CardHeader>
-              <CardTitle className="text-lg text-foreground">Report Content</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-6">
-                Are you sure you want to report this post? Our moderation team will review it.
-              </p>
-              <div className="flex gap-3 justify-end">
-                <Button 
-                  variant="outline" 
-                  onClick={() => setShowFlagModal(false)}
-                  className="border-border/50"
-                >
-                  Cancel
-                </Button>
-                <Button 
-                  variant="destructive" 
-                  onClick={() => {
-                    // Handle flag submission
-                    setShowFlagModal(false)
-                  }}
-                  className="bg-destructive hover:bg-destructive/90"
-                >
-                  Report
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+      {/* Flag Confirmation Modal */}
+      <FlagConfirmModal
+        isOpen={showFlagModal}
+        onClose={() => setShowFlagModal(false)}
+        type="post"
+        itemId={post.id}
+        onSuccess={onUpdate}
+      />
     </Card>
   )
 } 

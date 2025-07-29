@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import Voting from '@/components/Voting'
+import FlagConfirmModal from '@/components/FlagConfirmModal'
 import { MessageCircle, Send, Flag, Clock, User, AlertCircle, CheckCircle2, ChevronDown, ChevronUp } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -15,6 +16,7 @@ export default function Comments({ postId }) {
   const [showComments, setShowComments] = useState(false)
   const [newComment, setNewComment] = useState('')
   const [message, setMessage] = useState({ type: '', text: '' })
+  const [flagModal, setFlagModal] = useState({ isOpen: false, commentId: null })
 
   useEffect(() => {
     if (showComments && postId) {
@@ -97,6 +99,14 @@ export default function Comments({ postId }) {
   const toggleComments = () => {
     setShowComments(!showComments)
     setMessage({ type: '', text: '' })
+  }
+
+  const handleFlagComment = (commentId) => {
+    setFlagModal({ isOpen: true, commentId })
+  }
+
+  const closeFlagModal = () => {
+    setFlagModal({ isOpen: false, commentId: null })
   }
 
   const commentCount = comments.length
@@ -270,20 +280,33 @@ export default function Comments({ postId }) {
                         
                         {/* Comment Content */}
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-3 mb-3">
-                            <div className="flex items-center gap-1.5">
-                              <div className="w-1.5 h-1.5 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"></div>
-                              <Badge variant="secondary" className="text-xs bg-muted/50 border-border/50">
-                                <User className="w-3 h-3 mr-1" />
-                                Anonymous
-                              </Badge>
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-3">
+                              <div className="flex items-center gap-1.5">
+                                <div className="w-1.5 h-1.5 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"></div>
+                                <Badge variant="secondary" className="text-xs bg-muted/50 border-border/50">
+                                  <User className="w-3 h-3 mr-1" />
+                                  Anonymous
+                                </Badge>
+                              </div>
+                              <div className="flex items-center gap-1 text-muted-foreground">
+                                <Clock className="w-3 h-3" />
+                                <span className="text-xs">
+                                  {formatDate(comment.created_at)}
+                                </span>
+                              </div>
                             </div>
-                            <div className="flex items-center gap-1 text-muted-foreground">
-                              <Clock className="w-3 h-3" />
-                              <span className="text-xs">
-                                {formatDate(comment.created_at)}
-                              </span>
-                            </div>
+                            
+                            {/* Flag Button */}
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="shrink-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors duration-200 opacity-0 group-hover:opacity-100"
+                              onClick={() => handleFlagComment(comment.id)}
+                            >
+                              <Flag className="w-3 h-3" />
+                              <span className="sr-only">Report comment</span>
+                            </Button>
                           </div>
                           
                           <div className="prose prose-sm max-w-none text-foreground/90">
@@ -301,6 +324,15 @@ export default function Comments({ postId }) {
           </div>
         </div>
       )}
+
+      {/* Flag Confirmation Modal for Comments */}
+      <FlagConfirmModal
+        isOpen={flagModal.isOpen}
+        onClose={closeFlagModal}
+        type="comment"
+        itemId={flagModal.commentId}
+        onSuccess={fetchComments}
+      />
     </div>
   )
 } 

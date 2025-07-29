@@ -42,9 +42,20 @@ func Connect() {
 }
 
 func Migrate() {
-	err := DB.AutoMigrate(&models.Post{}, &models.UserFlag{}, &models.Comment{}, &models.Vote{})
+	err := DB.AutoMigrate(&models.Post{}, &models.Flag{}, &models.Comment{}, &models.Vote{})
 	if err != nil {
 		log.Fatal("Failed to migrate database:", err)
+	}
+	
+	// Drop old user_flags table if it exists
+	if DB.Migrator().HasTable("user_flags") {
+		log.Println("Dropping old user_flags table...")
+		err = DB.Migrator().DropTable("user_flags")
+		if err != nil {
+			log.Printf("Warning: Failed to drop user_flags table: %v", err)
+		} else {
+			log.Println("Successfully dropped old user_flags table")
+		}
 	}
 	
 	// Drop old reactions table if it exists and create votes table

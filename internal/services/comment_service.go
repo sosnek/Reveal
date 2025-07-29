@@ -73,9 +73,9 @@ func (s *CommentService) GetCommentsByPostID(postID uuid.UUID, clientIP string) 
 	// Get comments that are not globally flagged AND not flagged by this user
 	result := db.DB.Where("post_id = ? AND flagged = ?", postID, false).
 		Where("id NOT IN (?)", 
-			db.DB.Table("user_flags").
-				Select("post_id").
-				Where("ip_hash = ?", ipHash),
+			db.DB.Table("flags").
+				Select("comment_id").
+				Where("flag_type = ? AND ip_hash = ? AND comment_id IS NOT NULL", models.FlagTypeComment, ipHash),
 		).
 		Order("created_at ASC").
 		Find(&comments)
@@ -91,8 +91,8 @@ func (s *CommentService) FlagComment(commentID uuid.UUID, clientIP, reason, deta
 	ipHash := s.hashIP(clientIP)
 	
 	// Check if user already flagged this comment
-	var existingFlag models.UserFlag
-	result := db.DB.Where("post_id = ? AND ip_hash = ?", commentID, ipHash).First(&existingFlag)
+	var existingFlag models.Flag
+	result := db.DB.Where("flag_type = ? AND comment_id = ? AND ip_hash = ?", models.FlagTypeComment, commentID, ipHash).First(&existingFlag)
 	if result.Error == nil {
 		return fmt.Errorf("comment already flagged by user")
 	}
@@ -103,22 +103,16 @@ func (s *CommentService) FlagComment(commentID uuid.UUID, clientIP, reason, deta
 		return fmt.Errorf("comment not found")
 	}
 	
-	// Create user flag (reusing the UserFlag model, treating comment ID as post ID)
-	userFlag := &models.UserFlag{
-		PostID:    commentID, // Using the same table for simplicity
-		IPHash:    ipHash,
-		Reason:    reason,
-		Details:   details,
-		CreatedAt: time.Now(),
-	}
+	// Create flag using helper method
+	flag := models.NewCommentFlag(commentID, ipHash, reason, details)
 	
-	if err := db.DB.Create(userFlag).Error; err != nil {
+	if err := db.DB.Create(flag).Error; err != nil {
 		return err
 	}
 	
 	// Check if comment should be globally flagged (e.g., if 3+ users flag it)
 	var flagCount int64
-	db.DB.Model(&models.UserFlag{}).Where("post_id = ?", commentID).Count(&flagCount)
+	db.DB.Model(&models.Flag{}).Where("flag_type = ? AND comment_id = ?", models.FlagTypeComment, commentID).Count(&flagCount)
 	
 	if flagCount >= 3 {
 		// Globally flag the comment

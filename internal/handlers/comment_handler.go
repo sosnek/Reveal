@@ -109,7 +109,7 @@ func (h *CommentHandler) GetComments(c *gin.Context) {
 }
 
 type FlagCommentRequest struct {
-	Reason  string `json:"reason" binding:"required"`
+	Reason  string `json:"reason"`
 	Details string `json:"details"`
 }
 
@@ -133,28 +133,35 @@ func (h *CommentHandler) FlagComment(c *gin.Context) {
 		return
 	}
 
-	// Validate reason
-	validReasons := models.GetValidFlagReasons()
-	isValidReason := false
-	for _, validReason := range validReasons {
-		if req.Reason == validReason {
-			isValidReason = true
-			break
-		}
-	}
-	
-	if !isValidReason {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Invalid flag reason",
-		})
-		return
+	// Use default reason if none provided
+	if req.Reason == "" {
+		req.Reason = "reported"
 	}
 
-	if req.Reason == "other" && req.Details == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Details required when reason is 'other'",
-		})
-		return
+	// Only validate reason if it's not the default
+	if req.Reason != "reported" {
+		validReasons := models.GetValidFlagReasons()
+		isValidReason := false
+		for _, validReason := range validReasons {
+			if req.Reason == validReason {
+				isValidReason = true
+				break
+			}
+		}
+		
+		if !isValidReason {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "Invalid flag reason",
+			})
+			return
+		}
+
+		if req.Reason == "other" && req.Details == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "Details required when reason is 'other'",
+			})
+			return
+		}
 	}
 
 	clientIP := c.ClientIP()

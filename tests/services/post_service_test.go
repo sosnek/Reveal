@@ -33,7 +33,7 @@ func (suite *PostServiceTestSuite) SetupSuite() {
 	suite.db = database
 	
 	// Auto-migrate the schema
-	err = database.AutoMigrate(&models.Post{}, &models.UserFlag{})
+	err = database.AutoMigrate(&models.Post{}, &models.Flag{})
 	suite.Require().NoError(err)
 	
 	// Set test environment variable
@@ -48,7 +48,7 @@ func (suite *PostServiceTestSuite) TearDownSuite() {
 
 func (suite *PostServiceTestSuite) SetupTest() {
 	// Clean the database before each test
-	suite.db.Exec("DELETE FROM user_flags")
+	suite.db.Exec("DELETE FROM flags")
 	suite.db.Exec("DELETE FROM posts")
 }
 
@@ -101,62 +101,53 @@ func (suite *PostServiceTestSuite) TestCreatePost_SpamPrevention() {
 }
 
 func (suite *PostServiceTestSuite) TestGetRecentPosts_NoFlags() {
-	clientIP := "127.0.0.1"
-	
 	// Create test posts
-	for i := 0; i < 3; i++ {
-		_, err := suite.service.CreatePost("Title", "Content", clientIP)
-		assert.NoError(suite.T(), err)
-	}
+	clientIP := "192.168.1.1"
 	
-	posts, err := suite.service.GetRecentPosts(10, clientIP)
-	
-	assert.NoError(suite.T(), err)
-	assert.Len(suite.T(), posts, 3)
+	_, err := suite.service.CreatePost("Test Post 1", "This is test content 1", clientIP)
+	suite.NoError(err)
+	_, err = suite.service.CreatePost("Test Post 2", "This is test content 2", clientIP)
+	suite.NoError(err)
+
+	posts, err := suite.service.GetRecentPosts(clientIP, 10)
+	suite.NoError(err)
+	suite.Len(posts, 2)
 }
 
 func (suite *PostServiceTestSuite) TestGetRecentPosts_WithUserFlags() {
-	clientIP := "127.0.0.1"
-	
-	// Create test posts
-	post1, _ := suite.service.CreatePost("Title 1", "Content 1", clientIP)
-	post2, _ := suite.service.CreatePost("Title 2", "Content 2", clientIP)
-	post3, _ := suite.service.CreatePost("Title 3", "Content 3", clientIP)
-	
-	// Flag post2 as the same user
-	err := suite.service.FlagPost(post2.ID, clientIP, "spam", "")
-	assert.NoError(suite.T(), err)
-	
-	// Get posts - should only see post1 and post3
-	posts, err := suite.service.GetRecentPosts(10, clientIP)
-	
-	assert.NoError(suite.T(), err)
-	assert.Len(suite.T(), posts, 2)
-	
-	// Verify post2 is not in the results
-	postIDs := make([]uuid.UUID, len(posts))
-	for i, post := range posts {
-		postIDs[i] = post.ID
-	}
-	assert.NotContains(suite.T(), postIDs, post2.ID)
-	assert.Contains(suite.T(), postIDs, post1.ID)
-	assert.Contains(suite.T(), postIDs, post3.ID)
+	// Create test post
+	clientIP := "192.168.1.1"
+	post, err := suite.service.CreatePost("Test Post", "This is test content", clientIP)
+	suite.NoError(err)
+
+	// Flag the post with the same user
+	err = suite.service.FlagPost(post.ID, clientIP, "spam", "Test flag")
+	suite.NoError(err)
+
+	// Check if the flagged post is hidden from the user who flagged it
+	posts, err := suite.service.GetRecentPosts(clientIP, 10)
+	suite.NoError(err)
+	suite.Len(posts, 0)
+
+	// But visible to other users
+	otherClientIP := "192.168.1.2"
+	posts, err = suite.service.GetRecentPosts(otherClientIP, 10)
+	suite.NoError(err)
+	suite.Len(posts, 1)
 }
 
 func (suite *PostServiceTestSuite) TestGetRecentPosts_WithGlobalFlags() {
-	clientIP := "127.0.0.1"
-	
 	// Create test post
-	post, _ := suite.service.CreatePost("Title", "Content", clientIP)
-	
-	// Globally flag the post
-	suite.db.Model(&models.Post{}).Where("id = ?", post.ID).Update("flagged", true)
-	
-	// Get posts - should be empty
-	posts, err := suite.service.GetRecentPosts(10, clientIP)
-	
-	assert.NoError(suite.T(), err)
-	assert.Len(suite.T(), posts, 0)
+	clientIP := "192.168.1.1"
+	post, err := suite.service.CreatePost("Test Post", "This is test content", clientIP)
+	suite.NoError(err)
+
+	// Mark post as globally flagged
+	suite.db.Model(&post).Update("flagged", true)
+
+	posts, err := suite.service.GetRecentPosts(clientIP, 10)
+	suite.NoError(err)
+	suite.Len(posts, 0)
 }
 
 func (suite *PostServiceTestSuite) TestFlagPost_Success() {
@@ -172,7 +163,7 @@ func (suite *PostServiceTestSuite) TestFlagPost_Success() {
 	assert.NoError(suite.T(), err)
 	
 	// Verify flag was created
-	var flag models.UserFlag
+	var flag models.Flag
 	err = suite.db.Where("post_id = ?", post.ID).First(&flag).Error
 	assert.NoError(suite.T(), err)
 	assert.Equal(suite.T(), "spam", flag.Reason)
