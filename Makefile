@@ -1,6 +1,6 @@
 # Makefile for Reveal - Anonymous Secret Sharing Application
 
-.PHONY: help dev build test clean docker-build docker-run docker-down install-frontend build-frontend
+.PHONY: help dev build test clean docker-build docker-run docker-down install-frontend build-frontend build-vercel
 
 # Default target
 help:
@@ -10,6 +10,7 @@ help:
 	@echo "  test             - Run tests"
 	@echo "  install-frontend - Install frontend dependencies"
 	@echo "  build-frontend   - Build frontend for production"
+	@echo "  build-vercel     - Build frontend for Vercel deployment (AIO)"
 	@echo "  docker-build     - Build Docker image"
 	@echo "  docker-run       - Run with Docker Compose"
 	@echo "  docker-down      - Stop Docker containers"
@@ -34,6 +35,17 @@ install-frontend:
 build-frontend: install-frontend
 	@echo "Building frontend..."
 	cd web && npm run build
+
+# Build for Vercel deployment (All-in-One)
+build-vercel:
+	@echo "Building for Vercel deployment..."
+	@echo "Installing frontend dependencies..."
+	cd web && npm install
+	@echo "Running frontend linting..."
+	cd web && npm run lint || echo "Linting completed with warnings"
+	@echo "Building frontend for production..."
+	cd web && npm run build
+	@echo "Vercel build completed successfully!"
 
 # Run tests
 test:

@@ -1,7 +1,7 @@
 {
-  "buildCommand": "cd web && npm run build",
+  "buildCommand": "make build-vercel",
   "outputDirectory": "web/build",
-  "installCommand": "cd web && npm install",
+  "installCommand": "echo 'Dependencies handled by make command'",
   "framework": "vite",
   "rewrites": [
     {
