@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+	"strings"
 
 	"reveal/internal/db"
 	"reveal/internal/handlers"
@@ -42,8 +43,7 @@ func main() {
 	router.Use(gin.Recovery())
 
 	// Serve static files (frontend)
-	router.Static("/static", "./web/build/static")
-	router.Static("/themes", "./web/build/themes")
+	router.Static("/assets", "./web/build/assets")
 	router.StaticFile("/", "./web/build/index.html")
 	router.StaticFile("/favicon.ico", "./web/build/favicon.ico")
 
@@ -73,7 +73,12 @@ func main() {
 
 	// Fallback to serve React app for client-side routing
 	router.NoRoute(func(c *gin.Context) {
-		c.File("./web/build/index.html")
+		// Only serve index.html for non-API routes
+		if !strings.HasPrefix(c.Request.URL.Path, "/api") {
+			c.File("./web/build/index.html")
+		} else {
+			c.JSON(404, gin.H{"error": "Not found"})
+		}
 	})
 
 	// Start server

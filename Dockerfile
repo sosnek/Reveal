@@ -2,7 +2,7 @@
 FROM node:18-alpine AS frontend-build
 WORKDIR /app/web
 COPY web/package*.json ./
-RUN npm ci --only=production
+RUN npm ci
 COPY web/ ./
 RUN npm run build
 
