@@ -1,0 +1,181 @@
+1. ✨ Feature Overview
+1.1 Purpose
+Enhance user engagement by allowing visitors to anonymously comment on secrets and react with emoji-style reactions (e.g. ❤️, 😲, 👍). All interactions remain anonymous.
+
+1.2 Goals
+Let users leave comments on secrets without requiring identity
+
+Let users react with a limited set of emojis
+
+Prevent spam, abuse, or flooding via rate limiting and IP hashing
+
+Preserve original post anonymity and avoid user tracking
+
+2. 🧱 Feature Components
+Component	Technology
+Backend	Golang (extend existing API)
+Database	PostgreSQL (add comments and reactions tables)
+Frontend	React / Svelte / Vue (render & handle comment/reaction inputs)
+Spam control	Hashed IPs + rate limits + optional CAPTCHA
+Moderation	Flagging capability for comments
+Privacy	No accounts or persistent user tracking
+
+3. 📐 Data Model Extensions
+3.1 comments Table
+Column	Type	Description
+id	UUID (PK)	Unique comment ID
+post_id	UUID (FK)	Associated post ID
+content	TEXT	Comment text
+created_at	TIMESTAMP	Time of comment submission
+ip_hash	VARCHAR(64)	Hashed IP of commenter
+flagged	BOOLEAN	Marked as inappropriate (default: false)
+
+3.2 reactions Table
+Column	Type	Description
+id	UUID (PK)	Unique reaction ID
+post_id	UUID (FK)	Associated post ID
+emoji	VARCHAR(8)	Unicode emoji string (e.g., ❤️)
+ip_hash	VARCHAR(64)	Used to prevent duplicate reaction types per post
+created_at	TIMESTAMP	Time of reaction submission
+
+Optional: Use a composite unique index on (post_id, emoji, ip_hash) to allow only one type of each reaction per user per post.
+
+4. 🔗 API Design
+4.1 POST /api/posts/{id}/comments
+Submit a comment
+Request:
+
+json
+Copy
+Edit
+{
+  "content": "This really resonated with me..."
+}
+Response:
+
+json
+Copy
+Edit
+{
+  "id": "uuid",
+  "created_at": "timestamp"
+}
+4.2 GET /api/posts/{id}/comments
+Retrieve list of comments
+Response:
+
+json
+Copy
+Edit
+[
+  {
+    "id": "uuid",
+    "content": "...",
+    "created_at": "timestamp"
+  }
+]
+4.3 POST /api/posts/{id}/reactions
+React with an emoji
+Request:
+
+json
+Copy
+Edit
+{
+  "emoji": "❤️"
+}
+Response:
+
+json
+Copy
+Edit
+{
+  "success": true
+}
+4.4 GET /api/posts/{id}/reactions
+Returns a map of emoji to reaction counts
+
+json
+Copy
+Edit
+{
+  "❤️": 12,
+  "😲": 3,
+  "👍": 5
+}
+5. 🛡️ Security & Abuse Prevention
+Anonymity preserved: No identifiable data is stored
+
+IP hashing: To rate-limit per post per action
+
+Rate limiting: Middleware to prevent spam bursts
+
+Profanity filter: For comments (optional)
+
+Comment flagging: Enable moderation system
+
+Duplicate reactions: Enforced via (post_id, emoji, ip_hash) uniqueness
+
+6. 🧪 Testing Strategy
+Test Type	Coverage
+Unit Tests	Comment/reaction services, validation rules
+Integration	API routes for comment & reaction workflows
+Load Testing	Reaction spamming, comment burst simulation
+Security Testing	Rate limits, SQL injection, content abuse
+
+7. 🧩 Frontend UX Considerations
+Inline comment form under each post
+
+Display list of comments sorted by newest
+
+Emoji bar (❤️, 😲, 👍, 😢, etc.) below each post
+
+Real-time reaction count updates (optional using polling or websockets)
+
+Minimal UI for flagging a comment (e.g. "Report" link)
+
+8. 📈 Deployment & Migration Plan
+8.1 SQL Migration Example
+sql
+Copy
+Edit
+CREATE TABLE comments (
+  id UUID PRIMARY KEY,
+  post_id UUID REFERENCES posts(id) ON DELETE CASCADE,
+  content TEXT NOT NULL,
+  ip_hash VARCHAR(64),
+  flagged BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP DEFAULT now()
+);
+
+CREATE TABLE reactions (
+  id UUID PRIMARY KEY,
+  post_id UUID REFERENCES posts(id) ON DELETE CASCADE,
+  emoji VARCHAR(8) NOT NULL,
+  ip_hash VARCHAR(64),
+  created_at TIMESTAMP DEFAULT now(),
+  UNIQUE(post_id, emoji, ip_hash)
+);
+8.2 Deployment Checklist
+ Backend API implemented and tested
+
+ SQL migration applied
+
+ Frontend updated with UI for comments and reactions
+
+ Rate limiting enabled
+
+ Moderation tools extended for comment flagging
+
+ Post-deploy monitoring enabled
+
+9. 🚀 Future Enhancements
+Comment threading or replies (optional)
+
+Real-time sockets for comment/reaction updates
+
+Reaction analytics (heat maps by time, emoji popularity)
+
+Shadow banning for abusive commenters
+
+AI-based comment moderation
