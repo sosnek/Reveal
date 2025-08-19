@@ -1,6 +1,6 @@
 # Reveal - Anonymous Secret Sharing - Vibe coded in one day. 
 
-A secure, anonymous web application for sharing secrets and personal thoughts. Built with Go backend and modern React frontend, designed with privacy and anonymity as core principles.
+Disclaimer: This is not how I write code. This is simply a POC of what I could accomplish in one day without manually typing in a single line of code.
 
 <img width="3324" height="1788" alt="image" src="https://github.com/user-attachments/assets/1663c310-4c5d-4ba6-9a2d-36c7a0810db3" />
 <img width="3082" height="1782" alt="image" src="https://github.com/user-attachments/assets/f587cdda-b940-4215-aaee-a79874a97498" />
